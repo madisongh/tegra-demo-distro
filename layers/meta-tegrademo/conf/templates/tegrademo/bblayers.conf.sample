@@ -1,7 +1,7 @@
 # Version of layers configuration, specific to
 # each defined distro in the repository.
 # Format: ${DISTRO}-<version>
-TD_BBLAYERS_CONF_VERSION = "tegrademo-5"
+TD_BBLAYERS_CONF_VERSION = "tegrademo-5-alt"
 
 BBPATH = "${TOPDIR}"
 BBFILES ?= ""
@@ -14,6 +14,7 @@ BBLAYERS ?= " \
   ##OEROOT##/meta-networking \
   ##OEROOT##/meta-filesystems \
   ##OEROOT##/meta-virtualization \
+  ##OEROOT##/meta-swupdate \
   ##OEROOT##/meta-tegra-community \
   ##OEROOT##/meta-tegra-support \
   ##OEROOT##/meta-demo-ci \

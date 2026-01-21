@@ -15,7 +15,7 @@ TARGET_VENDOR = "-oe4t"
 # Increment version number (and the corresponding
 # setting int the template bblayers.conf.sample file)
 # each time the layer settings are changed.
-REQUIRED_TD_BBLAYERS_CONF_VERSION = "${DISTRO}-5"
+REQUIRED_TD_BBLAYERS_CONF_VERSION = "${DISTRO}-5-alt"
 
 LOCALCONF_VERSION = "2"
 
