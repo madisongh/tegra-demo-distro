@@ -1,4 +1,5 @@
 IMAGE_FEATURES += "ssh-server-openssh"
+IMAGE_FSTYPES += "tar.gz"
 
 LICENSE = "MIT"
 
