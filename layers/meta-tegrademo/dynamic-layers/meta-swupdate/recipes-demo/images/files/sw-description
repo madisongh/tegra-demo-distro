@@ -26,16 +26,7 @@ software =
 						installed-directly = true;
 						preserve-attributes = true;
 						sha256 = "$swupdate_get_sha256(@@ROOTFS_FILENAME@@)";
-					},
-					{
-						filename = "@@DEPLOY_KERNEL_IMAGE@@";
-						device = "@@ROOTFS_DEVICE_PATH@@/@@KERNEL_B_PARTNAME@@";
-					},
-					{
-						filename = "@@DTBFILE@@";
-						device = "@@ROOTFS_DEVICE_PATH@@/@@KERNEL_B_DTB_PARTNAME@@";
 					}
-
 				);
 				files: (
 					{
@@ -44,16 +35,6 @@ software =
 						properties = {create-destination = "true";}
 						name = "tegra-bootloader-capsule"
 						version = "@@TEGRA_SWUPDATE_BOOTLOADER_VERSION@@"
-						install-if-different = @@TEGRA_SWUPDATE_BOOTLOADER_INSTALL_ONLY_IF_DIFFERENT@@
-					},
-					{
-						filename = "@@ESP_ARCHIVE@@"
-						type = "archive"
-						installed-directly = true
-						path = "/boot/efi"
-						name = "tegra-bootloader-capsule"
-						version = "@@TEGRA_SWUPDATE_BOOTLOADER_VERSION@@"
-						install-if-different = @@TEGRA_SWUPDATE_BOOTLOADER_INSTALL_ONLY_IF_DIFFERENT@@
 					}
 				);
 				scripts: (
@@ -86,14 +67,6 @@ software =
 						installed-directly = true;
 						preserve-attributes = true;
 						sha256 = "$swupdate_get_sha256(@@ROOTFS_FILENAME@@)";
-					},
-					{
-						filename = "@@DEPLOY_KERNEL_IMAGE@@";
-						device = "@@ROOTFS_DEVICE_PATH@@/@@KERNEL_A_PARTNAME@@";
-					},
-					{
-						filename = "@@DTBFILE@@";
-						device = "@@ROOTFS_DEVICE_PATH@@/@@KERNEL_A_DTB_PARTNAME@@";
 					}
 				);
 				files: (
@@ -103,16 +76,6 @@ software =
 						properties = {create-destination = "true";}
 						name = "tegra-bootloader-capsule"
 						version = "@@TEGRA_SWUPDATE_BOOTLOADER_VERSION@@"
-						install-if-different = @@TEGRA_SWUPDATE_BOOTLOADER_INSTALL_ONLY_IF_DIFFERENT@@
-					},
-					{
-						filename = "@@ESP_ARCHIVE@@"
-						type = "archive"
-						installed-directly = true
-						path = "/boot/efi"
-						name = "tegra-bootloader-capsule"
-						version = "@@TEGRA_SWUPDATE_BOOTLOADER_VERSION@@"
-						install-if-different = @@TEGRA_SWUPDATE_BOOTLOADER_INSTALL_ONLY_IF_DIFFERENT@@
 					}
 				);
 				scripts: (
