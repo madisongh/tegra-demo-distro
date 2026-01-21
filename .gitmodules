@@ -18,3 +18,7 @@
 	path = repos/meta-tegra-community
 	url = https://github.com/OE4T/meta-tegra-community
 	branch = scarthgap
+[submodule "repos/meta-swupdate"]
+	path = repos/meta-swupdate
+	url = https://github.com/sbabic/meta-swupdate.git
+	branch = scarthgap
