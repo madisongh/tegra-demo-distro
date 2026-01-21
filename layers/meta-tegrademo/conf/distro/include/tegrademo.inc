@@ -50,3 +50,9 @@ INHERIT += "uninative"
 LICENSE_FLAGS_ACCEPTED += "commercial_faad2 commercial_x264"
 
 USE_REDUNDANT_FLASH_LAYOUT_DEFAULT ?= "1"
+# Default to putting the device tree in /boot
+UBOOT_EXTLINUX_FDT = "${DTBFILE}"
+BOOTORDER_INTERNAL = "BootOrderEmmc.dtbo"
+BOOTORDER_INTERNAL:orin-nano = "BootOrderSD.dtbo"
+TEGRA_BOOTORDER_SETTING = "${@'BootOrderNvme.dtbo' if (d.getVar('TNSPEC_BOOTDEV') or '').startswith('nvme') else '${BOOTORDER_INTERNAL}'}"
+TEGRA_BOOTCONTROL_OVERLAYS:append = " ${TEGRA_BOOTORDER_SETTING}"
