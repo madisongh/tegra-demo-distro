@@ -1,9 +1,7 @@
-# tegra-demo-distro
+# tegra-demo-distro fork for demonstrating A/B OTA update improvements
 
-Reference/demo distribution for NVIDIA Jetson platforms
-using Yocto Project tools and the [meta-tegra](https://github.com/OE4T/meta-tegra) BSP layer.
-
-![Build status](https://builder.madison.systems/badges/tegrademo-scarthgap.svg)
+This repo is **not** what you want to clone if you are looking for the
+OE4T Project's reference distro. For that, please visit https://github.com/OE4T/tegra-demo-distro .
 
 Metadata layers are brought in as git submodules:
 
@@ -13,79 +11,54 @@ Metadata layers are brought in as git submodules:
 | meta-tegra            | scarthgap      | L4T BSP layer - L4T R36.5.0/JetPack 6.2.2           |
 | meta-tegra-community  | scarthgap      | OE4T layer with additions from the community        |
 | meta-openembedded     | scarthgap      | OpenEmbedded layers                                 |
+| meta-swupdate         | scarthgap      | swupdate layer                                      |
 | meta-virtualization   | scarthgap      | Virtualization layer for docker support             |
 
-## Prerequisites
+## Changes from the stock OE4T demo distro
 
-See the [Yocto Project Quick Build](https://docs.yoctoproject.org/brief-yoctoprojectqs/index.html)
-documentation for information on setting up your build host.
+1. The meta-swupdate layer is included, for testing OTA updates.
 
-## Setting up
+2. UEFI patches are applied, see description below.
 
-1. Clone this repository:
+3. The distro config sets `UBOOT_EXTLINUX_FDT` to place the device tree in `/boot`,
+   and adds a boot order overlay to `TEGRA_BOOTCONTROL_OVERLAYS` to tell UEFI which
+   device to boot from (currently needed in conjunction with the applied patches).
 
-        $ git clone https://github.com/OE4T/tegra-demo-distro.git
+4. The demo images include `swupdate`, and create `tar.gz` tarballs for forming swupdate
+   packages.
 
-2. Switch to the appropriate branch, using the
-   [wiki page](https://github.com/OE4T/tegra-demo-distro/wiki/Which-branch-should-I-use%3F)
-   for guidance.
+## UEFI patches
 
-3. Initialize the git submodules:
+The patches applied to UEFI enable cleaner A/B OTA updates by building the L4TLauncher EFI application into the UEFI image.
+This eliminates the need to update the ESP at all during OTA updates, eliminating a possible failure/bricking incident if
+power is lost during an update due to lack of ESP redundancy. The ESP is still made available for locating update capsules.
 
-        $ cd tegra-demo-distro
-        $ git submodule update --init
+The patches also improve capsule update speeds, and reduce wear on the QSPI flash, by only applying updates to flash
+partitions that are changed by the capsule update.
 
-4. Source the `setup-env` script to create a build directory,
-   specifying the MACHINE you want to configure as the default
-   for your builds. For example, to set up a build directory
-   called `build` that is set up for the Jetson Xavier NX
-   developer kit and the default `tegrademo` distro:
+To use these patches, you *must* (currently) use a boot order DTB overlay to tell UEFI which device you are booting from.
+They also restrict you to using the L4TLauncher EFI application.
 
-        $ . ./setup-env --machine jetson-xavier-nx-devkit
+The modified UEFI configuration here is patched to further optimize boot time by eliminating unneeded features and
+drivers. It set up to use L4TLauncher's extlinux-like boot support **only**, since the intent is to simplify the
+flash layout to remove the Android kernel and DTB partitions.
 
-   You can get a complete list of available options, MACHINE
-   names, and DISTRO names with
+## Testing
 
-        $ . ./setup-env --help
+Testing so far has only been with `MACHINE="jetson-orin-nano-devkit-nvme"`.
 
-5. Optional: Install pre-commit hook for commit autosigning using
-        $ ./scripts-setup/setup-git-hooks
+## Future work
 
-## Distributions
+1. Custom, simplified flash layouts.
 
-Use the `--distro` option with `setup-env` to specify a distribution for your build,
-or customize the DISTRO setting in your `$BUILDDIR/conf/local.conf` to reference one
-of the supported distributions.
+2. Test other machines.
 
-Currently supported distributions are listed below:
+3. Rework flash layouts to separate the `/boot` partition from the main rootfs. This will allow for
+   having encrypted rootfs setups, and will also let us format the `/boot` file system in a way that
+   UEFI's ext4 filesystem driver will always understand it, even if the Linux kernel starts adding ext4
+   features in a way that the UEFI driver can't deal with.
 
+4. If possible, migrate to other R36.4.4-based branches for further testing.
 
-| Distribution name | Description                                                   |
-| ----------------- | ------------------------------------------------------------- |
-| tegrademo         | Default distro used to demonstrate/test meta-tegra features   |
+There are some other possible examples around LUKS and DM-Verity setups that I have in mind.
 
-## Images
-
-The `tegrademo` distro includes the following image recipes, which
-are dervied from the `core-image-XXX` recipes in OE-Core but configured
-for Jetson platforms. They include some additional test tools and
-demo applications.
-
-| Recipe name       | Description                                                   |
-| ----------------- | ------------------------------------------------------------- |
-| demo-image-base   | Basic image with no graphics                                  |
-| demo-image-egl    | Base with DRM/EGL graphics, no window manager                 |
-| demo-image-sato   | X11 image with Sato UI                                        |
-| demo-image-weston | Wayland with Weston compositor                                |
-| demo-image-full   | Sato image plus nvidia-docker, openCV, multimedia API samples |
-
-### Update image demo
-
-A [swupdate](https://sbabic.github.io/swupdate/) demo image is also available which supports
-A/B rootfs updates to any of the supported images.  For details refer to
-[layers/meta-tegrademo/dynamic-layers/meta-swupdate/README.md](layers/meta-tegrademo/dynamic-layers/meta-swupdate/README.md).
-
-# Contributing
-
-Please see the contributor wiki page at [this link](https://github.com/OE4T/meta-tegra/wiki/OE4T-Contributor-Guide).
-Contributions are welcome!
