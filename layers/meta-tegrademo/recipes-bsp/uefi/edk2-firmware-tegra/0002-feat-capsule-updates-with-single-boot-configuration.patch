@@ -1,4 +1,4 @@
-From 1bdcac6694df7907746cc1804463a1e9cbaec0a7 Mon Sep 17 00:00:00 2001
+From 66d72f79f559374209ad2bd1783c1066eab91161 Mon Sep 17 00:00:00 2001
 From: Matt Madison <matt@madison.systems>
 Date: Thu, 15 Jan 2026 00:40:20 -0800
 Subject: [PATCH 2/2] feat: capsule updates with single-boot configuration
@@ -10,38 +10,40 @@ does not need to contain a boot launcher.
 
 Signed-off-by: Matt Madison <matt@madison.systems>
 ---
- .../PlatformBootManagerLib/PlatformBm.c       |  3 ++
+ .../PlatformBootManagerLib/PlatformBm.c       |  4 ++
  .../PlatformBootOrderLib.c                    | 50 +++++++++++++++----
  .../PlatformBootOrderLib.inf                  |  1 +
- 3 files changed, 44 insertions(+), 10 deletions(-)
+ .../PlatformBootOrderLibNoIpmi.inf            |  3 ++
+ 4 files changed, 48 insertions(+), 10 deletions(-)
 
 diff --git a/Silicon/NVIDIA/Library/PlatformBootManagerLib/PlatformBm.c b/Silicon/NVIDIA/Library/PlatformBootManagerLib/PlatformBm.c
-index b2c69f47..856c0b6d 100644
+index 91f8089e..620f0df5 100644
 --- a/Silicon/NVIDIA/Library/PlatformBootManagerLib/PlatformBm.c
 +++ b/Silicon/NVIDIA/Library/PlatformBootManagerLib/PlatformBm.c
-@@ -1937,6 +1937,9 @@ PlatformBootManagerBeforeConsole (
-       LOAD_OPTION_ACTIVE,
-       LoadOptionTypeBoot
-       );
+@@ -2145,6 +2145,10 @@ PlatformBootManagerBeforeConsole (
+     if (!EFI_ERROR (Status)) {
+       mRscHandler->Register (SingleBootStatusCodeCallback, TPL_CALLBACK);
+     }
 +
 +    EfiBootManagerRefreshAllBootOption ();
 +    SetBootOrder ();
++
    }
  
    //
 diff --git a/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLib.c b/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLib.c
-index e556cde7..83022e2e 100644
+index 5c94b837..7235d9c3 100644
 --- a/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLib.c
 +++ b/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLib.c
-@@ -10,6 +10,7 @@
- #include <Uefi.h>
- #include <Library/BaseMemoryLib.h>
+@@ -13,6 +13,7 @@
  #include <Library/MemoryAllocationLib.h>
+ #include <Library/HobLib.h>
+ #include <Library/PlatformResourceLib.h>
 +#include <Library/PcdLib.h>
  #include <Library/PrintLib.h>
  #include <Library/UefiBootManagerLib.h>
  #include <Library/UefiLib.h>
-@@ -44,6 +45,9 @@ NVIDIA_BOOT_ORDER_PRIORITY  mBootPriorityTemplate[BOOT_ORDER_TEMPLATE_CLASS_COUN
+@@ -47,6 +48,9 @@ NVIDIA_BOOT_ORDER_PRIORITY  mBootPriorityTemplate[BOOT_ORDER_TEMPLATE_CLASS_COUN
  STATIC  NVIDIA_BOOT_ORDER_PRIORITY  *mBootPriorityTable = NULL;
  STATIC  UINTN                       mBootPriorityCount  = 0;
  
@@ -51,7 +53,7 @@ index e556cde7..83022e2e 100644
  STATIC
  EFI_PCI_IO_PROTOCOL *
  GetBootOptPciIoProtocol (
-@@ -319,6 +323,16 @@ GetBootClassOfOption (
+@@ -334,6 +338,16 @@ GetBootClassOfOption (
    Bus      = MAX_UINTN;
    Device   = MAX_UINTN;
    Function = MAX_UINTN;
@@ -68,7 +70,7 @@ index e556cde7..83022e2e 100644
    if (StrCmp (Option->Description, L"UEFI Shell") == 0) {
      for (BootPriorityIndex = 0; BootPriorityIndex < Count; BootPriorityIndex++) {
        if (AsciiStrCmp (Table[BootPriorityIndex].OrderName, "shell") == 0) {
-@@ -608,17 +622,11 @@ STATIC
+@@ -637,17 +651,11 @@ STATIC
  INTN
  EFIAPI
  BootOrderSortCompare (
@@ -89,7 +91,7 @@ index e556cde7..83022e2e 100644
  }
  
  STATIC
-@@ -644,7 +652,29 @@ ParseDefaultBootPriority (
+@@ -673,7 +681,29 @@ ParseDefaultBootPriority (
    UINTN                       BootPrioritySbdfLen;
    UINTN                       BootClassIndex;
  
@@ -119,7 +121,7 @@ index e556cde7..83022e2e 100644
    // Process the priority order
    Status = GetVariable2 (
               L"DefaultBootPriority",
-@@ -779,7 +809,7 @@ SetBootOrder (
+@@ -808,7 +838,7 @@ SetBootOrder (
  
    ParseDefaultBootPriority ();
  
@@ -129,10 +131,10 @@ index e556cde7..83022e2e 100644
    VariableData = TRUE;
    gRT->SetVariable (
 diff --git a/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLib.inf b/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLib.inf
-index 5dc917b8..b9012e86 100644
+index cdcc828d..960bf07c 100644
 --- a/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLib.inf
 +++ b/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLib.inf
-@@ -42,6 +42,7 @@
+@@ -43,6 +43,7 @@
  
  [Pcd]
    gNVIDIATokenSpaceGuid.PcdIpmiNetworkBootMode
@@ -140,6 +142,20 @@ index 5dc917b8..b9012e86 100644
  
  [Guids]
    gEfiGlobalVariableGuid
+diff --git a/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLibNoIpmi.inf b/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLibNoIpmi.inf
+index e2ea7d68..d3fd0405 100644
+--- a/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLibNoIpmi.inf
++++ b/Silicon/NVIDIA/Library/PlatformBootOrderLib/PlatformBootOrderLibNoIpmi.inf
+@@ -39,6 +39,9 @@
+ [Protocols]
+   gEfiPciIoProtocolGuid          ## CONSUMES
+ 
++[Pcd]
++  gNVIDIATokenSpaceGuid.PcdSingleBootSupport
++
+ [Guids]
+   gEfiGlobalVariableGuid
+   gNVIDIATokenSpaceGuid
 -- 
 2.43.0
 

@@ -5,14 +5,9 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}:"
 #        updates
 #  0002: allow for capsule updates when using CONFIG_SINGLE_BOOT_L4T_LAUNCHER,
 #        which embeds L4TLauncher in the UEFI image in SPI flash
-#
-# (0005 and 0006 are fixes that went into 36.4.3 but did not get
-# included in 36.4.4, but look important.)
 SRC_URI += "\
     file://0001-TegraFmp-write-only-changed-partitions-during-fw-upd.patch;patchdir=../edk2-nvidia \
     file://0002-feat-capsule-updates-with-single-boot-configuration.patch;patchdir=../edk2-nvidia \
-    file://0005-fix-bug-in-block-erase-logic.patch;patchdir=../edk2-nvidia \
-    file://0006-fix-bug-in-secureboot-hash-compute-and-optimize-read.patch;patchdir=../edk2-nvidia \
 "
 
 # Set EDK2_VERBOSE_LOGGING = "1" in your local.conf to get more logs
