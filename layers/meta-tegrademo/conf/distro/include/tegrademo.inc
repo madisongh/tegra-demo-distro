@@ -25,10 +25,14 @@ ESDK_CLASS_INHERIT_DISABLE:append = " tegra-support-sanity"
 BB_SIGNATURE_HANDLER ?= "OEEquivHash"
 BB_HASHSERVE ??= "auto"
 
-TD_DEFAULT_DISTRO_FEATURES = "pam virtualization"
-DISTRO_FEATURES ?= "${TD_DEFAULT_DISTRO_FEATURES}"
+CONTAINER_PROFILE ?= "default"
+require conf/distro/include/meta-virt-container-${CONTAINER_PROFILE}.inc
 
-TEGRA_DEFAULT_KERNEL ?= "linux-yocto"
+TD_DEFAULT_DISTRO_FEATURES = "pam virtualization glvnd"
+DISTRO_FEATURES ?= "${TD_DEFAULT_DISTRO_FEATURES}"
+DISTRO_FEATURES_NATIVE += "opengl glvnd wayland x11"
+
+TEGRA_DEFAULT_KERNEL ?= "linux-noble-nvidia-tegra"
 PREFERRED_PROVIDER_virtual/kernel:tegra = "${TEGRA_DEFAULT_KERNEL}"
 PREFERRED_VERSION_linux-yocto ?= "6.18%"
 PREFERRED_VERSION_linux-yocto-rt ?= "6.18%"
@@ -55,4 +59,4 @@ USE_REDUNDANT_FLASH_LAYOUT_DEFAULT ?= "1"
 DOCKER_OCI_RUNTIMES ?= '{"nvidia":{"args":[],"path":"nvidia-container-runtime"}}'
 DOCKER_DEFAULT_RUNTIME ?= "nvidia"
 
-require ${@'dynamic-layers/meta-swupdate/conf/distro/include/tegra-swupdate.inc' if 'swupdate' in d.getVar('BBFILE_COLLECTIONS').split() else ''}
+require ${@'dynamic-layers/meta-swupdate/conf/distro/include/tegra-swupdate.inc' if d.getVar('LAYERDIR_meta-swupdate') else ''}

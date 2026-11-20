@@ -3,7 +3,7 @@ DESCRIPTION = "Tegra reference image with the Holoscan SDK, Holoscan Camera, the
 require demo-image-reference.inc
 
 python () {
-    if 'meta-iceoryx2' not in d.getVar('BBFILE_COLLECTIONS').split():
+    if not d.getVar('LAYERDIR_meta-iceoryx2'):
         raise bb.parse.SkipRecipe('requires the meta-iceoryx2 layer')
 }
 
