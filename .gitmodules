@@ -1,27 +1,27 @@
 [submodule "repos/meta-openembedded"]
 	path = repos/meta-openembedded
-	url = https://github.com/openembedded/meta-openembedded.git
-	branch = master
+	url = https://git.yoctoproject.org/experimental-layers
+	branch = meta-openembedded
 [submodule "repos/meta-virtualization"]
 	path = repos/meta-virtualization
-	url = https://git.yoctoproject.org/meta-virtualization
-	branch = master
+	url = https://git.yoctoproject.org/experimental-layers
+	branch = meta-virtualization
 [submodule "repos/meta-tegra"]
 	path = repos/meta-tegra
-	url = https://github.com/OE4T/meta-tegra.git
-	branch = master
+	url = https://github.com/madisongh/meta-tegra-wip.git
+	branch = experimental
 [submodule "repos/meta-tegra-community"]
 	path = repos/meta-tegra-community
-	url = https://github.com/OE4T/meta-tegra-community
-	branch = master
+	url = https://github.com/madisongh/meta-tegra-community-wip.git
+	branch = experimental
 [submodule "repos/bitbake"]
 	path = repos/bitbake
-	url = https://github.com/openembedded/bitbake.git
+	url = https://git.yoctoproject.org/experimental-layers
 	branch = master
 [submodule "repos/openembedded-core"]
 	path = repos/openembedded-core
-	url = https://github.com/openembedded/openembedded-core.git
-	branch = master
+	url = https://git.yoctoproject.org/experimental-layers
+	branch = oe-core
 [submodule "repos/meta-swupdate"]
 	path = repos/meta-swupdate
 	url = https://github.com/sbabic/meta-swupdate.git
